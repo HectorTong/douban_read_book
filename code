@@ -1,0 +1,22 @@
+import time
+import requests
+from bs4 import BeautifulSoup
+
+def get_douban_book_list(url):
+  headers = {
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+  }
+  res = requests.get('https://movie.douban.com/top250', headers = headers)
+  soup = BeautifulSoup(res.text, 'html.parser')
+  items = soup.find_all('div', class_='hd')
+  for i in items:
+    tag = i.find('a')
+    name = tag.find(class_='title').text
+    link = tag['href']
+    print(name, link)
+
+url = 'https://book.douban.com/top250?start={}'
+urls = [url.format(num * 25) for num in range(10)]
+for item in urls:
+  get_douban_book_list(item)
+  time.sleep(1)
